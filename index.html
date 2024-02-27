@@ -23,34 +23,25 @@
   const db = getFirestore(app);
 
   onAuthStateChanged(auth, (user) => {
-    if (user) {
-      updateUserProfile(user);
-      const userDocRef = doc(db, "users", user.uid);
+  if (user) {
+    updateUserProfile(user);
+    const userDocRef = doc(db, "users", user.uid);
 
-      document.getElementById('updateProfileForm').addEventListener('submit', (e) => {
-          e.preventDefault(); // Prevent form submission
-          const newDisplayName = document.getElementById('newDisplayName').value;
-          const newProfilePicture = document.getElementById('newProfilePicture').value;
-
-          // Update user profile in Firestore
-          setDoc(userDocRef, {
-            displayName: newDisplayName,
-            profilePicture: newProfilePicture
-          }, { merge: true })
-          .then(() => {
-            // Update successful
-            console.log("Profile updated successfully");
-            updateUserProfile(user);
-            document.getElementById('updateProfileForm').reset(); // Clear the form
-          })
-          .catch((error) => {
-            console.error("Error updating profile: ", error);
-          });
-      });
-    } else {
-      displayPopup();
-    }
-  });
+    document.getElementById('updateProfileButton').addEventListener('click', () => {
+      const newDisplayName = document.getElementById('newDisplayName').value;
+      const profilePictureInput = document.getElementById('profilePictureInput');
+      const newProfilePicture = profilePictureInput.files[0];
+      if (newDisplayName !== '' && newProfilePicture) {
+        // Perform the file upload and database update here
+        // You can use Firebase Storage for file upload and update the profile picture URL in the Firestore database
+      } else {
+        console.error("Please enter a display name and choose a profile picture");
+      }
+    });
+  } else {
+    displayPopup();
+  }
+});
 
   function updateUserProfile(user) {
     const userName = user.displayName;
@@ -147,14 +138,14 @@
 	</div>
 	</div>
 	<div class="card card-style">
-	    <form id="updateProfileForm">
+	   <form id="updateProfileForm">
   <label for="newDisplayName">New Display Name:</label>
   <input type="text" id="newDisplayName" required>
 
-  <label for="newProfilePicture">New Profile Picture URL:</label>
-  <input type="text" id="newProfilePicture" required>
+  <label for="newProfilePicture">Choose Profile Picture:</label>
+  <input type="file" id="profilePictureInput" accept="image/*" required>
 
-  <button type="submit">Update Profile</button>
+  <button type="button" id="updateProfileButton">Update Profile</button>
 </form>
 	</div>
 <script src="bootstrap.min.js"></script>
