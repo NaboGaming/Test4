@@ -4,19 +4,87 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Akaunti Yangu</title>
-<script defer type="module">import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";import { getFirestore, collection, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";const firebaseConfig = {apiKey: "AIzaSyC_VKdV-KsIzUiOb7jFLsYXdTsuGkLiS-Q",authDomain: "register-71bde.firebaseapp.com",projectId: "register-71bde",storageBucket: "register-71bde.appspot.com",messagingSenderId: "412548441298",appId: "1:412548441298:web:e0fb2b6c5fbd4af7d0b90b"};const app = initializeApp(firebaseConfig);const auth = getAuth(app);const db = getFirestore(app);onAuthStateChanged(auth, (user) => {if (user) {updateUserProfile(user);const userDocRef = doc(db, "users", user.uid);const userDoc = {displayName: user.displayName,email: user.email,profilePicture: user.photoURL,};setDoc(userDocRef, userDoc, { merge: true }).then(() => {console.log("+");}).catch((error) => {console.error("?: ", error);});} else {displayPopup();}});function updateUserProfile(user) {const userName = user.displayName;const userEmail = user.email;const userProfilePicture = user.photoURL;document.getElementById("userName").textContent = userName;document.getElementById("userEmail").textContent = userEmail;document.getElementById("userProfilePicture").src = userProfilePicture;}function displayPopup() {var popup = document.getElementById('customPopup');popup.style.display = "block";}function closePopup() {var popup = document.getElementById('customPopup');popup.style.display = "none";} document.getElementById('signOutBtn').addEventListener('click', function() {
-      auth.signOut().then(() => {
-        // Sign-out successful.
-        redirectToSignInPage();
-      }).catch((error) => {
-        // An error happened.
-        console.error("Error during sign out: ", error);
-      });
-    });
+<script defer type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+  import { getFirestore, collection, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
 
-    function redirectToSignInPage() {
-      window.location.href = 'https://nabogaming.github.io/Jisajili/'; // Replace 'sign-in.html' with your desired sign-in page URL
-    }</script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyC_VKdV-KsIzUiOb7jFLsYXdTsuGkLiS-Q",
+    authDomain: "register-71bde.firebaseapp.com",
+    projectId: "register-71bde",
+    storageBucket: "register-71bde.appspot.com",
+    messagingSenderId: "412548441298",
+    appId: "1:412548441298:web:e0fb2b6c5fbd4af7d0b90b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      updateUserProfile(user);
+      const userDocRef = doc(db, "users", user.uid);
+
+      document.getElementById('updateProfileForm').addEventListener('submit', (e) => {
+          e.preventDefault(); // Prevent form submission
+          const newDisplayName = document.getElementById('newDisplayName').value;
+          const newProfilePicture = document.getElementById('newProfilePicture').value;
+
+          // Update user profile in Firestore
+          setDoc(userDocRef, {
+            displayName: newDisplayName,
+            profilePicture: newProfilePicture
+          }, { merge: true })
+          .then(() => {
+            // Update successful
+            console.log("Profile updated successfully");
+            updateUserProfile(user);
+            document.getElementById('updateProfileForm').reset(); // Clear the form
+          })
+          .catch((error) => {
+            console.error("Error updating profile: ", error);
+          });
+      });
+    } else {
+      displayPopup();
+    }
+  });
+
+  function updateUserProfile(user) {
+    const userName = user.displayName;
+    const userEmail = user.email;
+    const userProfilePicture = user.photoURL;
+    document.getElementById("userName").textContent = userName;
+    document.getElementById("userEmail").textContent = userEmail;
+    document.getElementById("userProfilePicture").src = userProfilePicture;
+  }
+
+  function displayPopup() {
+    var popup = document.getElementById('customPopup');
+    popup.style.display = "block";
+  }
+
+  function closePopup() {
+    var popup = document.getElementById('customPopup');
+    popup.style.display = "none";
+  }
+
+  document.getElementById('signOutBtn').addEventListener('click', function() {
+    auth.signOut().then(() => {
+      // Sign-out successful.
+      redirectToSignInPage();
+    }).catch((error) => {
+      // An error happened.
+      console.error("Error during sign out: ", error);
+    });
+  });
+
+  function redirectToSignInPage() {
+    window.location.href = 'https://nabogaming.github.io/Jisajili/'; // Replace 'sign-in.html' with your desired sign-in page URL
+  }
+</script>
 <link rel="stylesheet" type="text/css" href="bootstrap.css">
 
 <link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
@@ -79,7 +147,15 @@
 	</div>
 	</div>
 	<div class="card card-style">
-	    hi
+	    <form id="updateProfileForm">
+  <label for="newDisplayName">New Display Name:</label>
+  <input type="text" id="newDisplayName" required>
+
+  <label for="newProfilePicture">New Profile Picture URL:</label>
+  <input type="text" id="newProfilePicture" required>
+
+  <button type="submit">Update Profile</button>
+</form>
 	</div>
 <script src="bootstrap.min.js"></script>
 <script src="custom.js"></script>
