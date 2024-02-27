@@ -5,37 +5,64 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Akaunti Yangu</title>
 <script defer type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
-  import { getFirestore, collection, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyC_VKdV-KsIzUiOb7jFLsYXdTsuGkLiS-Q",
-    authDomain: "register-71bde.firebaseapp.com",
-    projectId: "register-71bde",
-    storageBucket: "register-71bde.appspot.com",
-    messagingSenderId: "412548441298",
-    appId: "1:412548441298:web:e0fb2b6c5fbd4af7d0b90b"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyC_VKdV-KsIzUiOb7jFLsYXdTsuGkLiS-Q",
+  authDomain: "register-71bde.firebaseapp.com",
+  projectId: "register-71bde",
+  storageBucket: "register-71bde.appspot.com",
+  messagingSenderId: "412548441298",
+  appId: "1:412548441298:web:e0fb2b6c5fbd4af7d0b90b"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-  onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, (user) => {
   if (user) {
     updateUserProfile(user);
-    const userDocRef = doc(db, "users", user.uid);
 
-    document.getElementById('updateProfileButton').addEventListener('click', () => {
-      const newDisplayName = document.getElementById('newDisplayName').value;
-      const profilePictureInput = document.getElementById('profilePictureInput');
-      const newProfilePicture = profilePictureInput.files[0];
-      if (newDisplayName !== '' && newProfilePicture) {
-        // Perform the file upload and database update here
-        // You can use Firebase Storage for file upload and update the profile picture URL in the Firestore database
-      } else {
-        console.error("Please enter a display name and choose a profile picture");
+    document.getElementById("updateProfileForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const newName = document.getElementById("newName").value;
+      const newPhoto = document.getElementById("newPhoto").files[0];
+
+      if (newName || newPhoto) {
+        const updates = {};
+
+        if (newName) {
+          updates.displayName = newName;
+        }
+
+        if (newPhoto) {
+          // Upload the new photo to storage and get the download URL
+          const storageRef = storage.ref('profilePictures/' + user.uid + '/profilePicture');
+          storageRef.put(newPhoto).then((snapshot) => {
+            return snapshot.ref.getDownloadURL();
+          }).then((downloadURL) => {
+            updates.photoURL = downloadURL;
+            return updateProfile(auth.currentUser, updates);
+          }).then(() => {
+            return updateDoc(doc(db, "users", user.uid), updates);
+          }).then(() => {
+            alert("Profile updated successfully!");
+          }).catch((error) => {
+            console.error("Error updating profile: ", error);
+          });
+        } else {
+          return updateProfile(auth.currentUser, updates).then(() => {
+            return updateDoc(doc(db, "users", user.uid), updates);
+          }).then(() => {
+            alert("Profile updated successfully!");
+          }).catch((error) => {
+            console.error("Error updating profile: ", error);
+          });
+        }
       }
     });
   } else {
@@ -43,38 +70,35 @@
   }
 });
 
-  function updateUserProfile(user) {
-    const userName = user.displayName;
-    const userEmail = user.email;
-    const userProfilePicture = user.photoURL;
-    document.getElementById("userName").textContent = userName;
-    document.getElementById("userEmail").textContent = userEmail;
-    document.getElementById("userProfilePicture").src = userProfilePicture;
-  }
+function updateUserProfile(user) {
+  document.getElementById("userName").textContent = user.displayName;
+  document.getElementById("userEmail").textContent = user.email;
+  document.getElementById("userProfilePicture").src = user.photoURL;
+}
 
-  function displayPopup() {
-    var popup = document.getElementById('customPopup');
-    popup.style.display = "block";
-  }
+function displayPopup() {
+  var popup = document.getElementById('customPopup');
+  popup.style.display = "block";
+}
 
-  function closePopup() {
-    var popup = document.getElementById('customPopup');
-    popup.style.display = "none";
-  }
+function closePopup() {
+  var popup = document.getElementById('customPopup');
+  popup.style.display = "none";
+}
 
-  document.getElementById('signOutBtn').addEventListener('click', function() {
-    auth.signOut().then(() => {
-      // Sign-out successful.
-      redirectToSignInPage();
-    }).catch((error) => {
-      // An error happened.
-      console.error("Error during sign out: ", error);
-    });
+document.getElementById('signOutBtn').addEventListener('click', function() {
+  auth.signOut().then(() => {
+    // Sign-out successful.
+    redirectToSignInPage();
+  }).catch((error) => {
+    // An error happened.
+    console.error("Error during sign out: ", error);
   });
+});
 
-  function redirectToSignInPage() {
-    window.location.href = 'https://nabogaming.github.io/Jisajili/'; // Replace 'sign-in.html' with your desired sign-in page URL
-  }
+function redirectToSignInPage() {
+  window.location.href = 'https://nabogaming.github.io/Jisajili/'; // Replace 'sign-in.html' with your desired sign-in page URL
+}
 </script>
 <link rel="stylesheet" type="text/css" href="bootstrap.css">
 
@@ -138,15 +162,25 @@
 	</div>
 	</div>
 	<div class="card card-style">
-	   <form id="updateProfileForm">
-  <label for="newDisplayName">New Display Name:</label>
-  <input type="text" id="newDisplayName" required>
+	   
+  <form id="updateProfileForm" enctype="multipart/form-data">
+    <div>
+      <label for="newName">New Name:</label>
+      <input type="text" id="newName">
+    </div>
+    <div>
+      <label for="newPhoto">New Photo:</label>
+      <input type="file" id="newPhoto">
+    </div>
+    <button type="submit">Update Profile</button>
+  </form>
 
-  <label for="newProfilePicture">Choose Profile Picture:</label>
-  <input type="file" id="profilePictureInput" accept="image/*" required>
+  <div id="customPopup" style="display: none;">
+    <!-- Popup content here -->
+  </div>
 
-  <button type="button" id="updateProfileButton">Update Profile</button>
-</form>
+  <button id="signOutBtn">Sign Out</button>
+
 	</div>
 <script src="bootstrap.min.js"></script>
 <script src="custom.js"></script>
