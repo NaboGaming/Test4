@@ -6,23 +6,51 @@
 <title>Akaunti Yangu</title>
 <script defer type="module">import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";import { getFirestore, collection, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";const firebaseConfig = {apiKey: "AIzaSyC_VKdV-KsIzUiOb7jFLsYXdTsuGkLiS-Q",authDomain: "register-71bde.firebaseapp.com",projectId: "register-71bde",storageBucket: "register-71bde.appspot.com",messagingSenderId: "412548441298",appId: "1:412548441298:web:e0fb2b6c5fbd4af7d0b90b"};const app = initializeApp(firebaseConfig);const auth = getAuth(app);const db = getFirestore(app);onAuthStateChanged(auth, (user) => {if (user) {updateUserProfile(user);const userDocRef = doc(db, "users", user.uid);const userDoc = {displayName: user.displayName,email: user.email,profilePicture: user.photoURL,};setDoc(userDocRef, userDoc, { merge: true }).then(() => {console.log("+");}).catch((error) => {console.error("?: ", error);});} else {displayPopup();}});function updateUserProfile(user) {const userName = user.displayName;const userEmail = user.email;const userProfilePicture = user.photoURL;document.getElementById("userName").textContent = userName;document.getElementById("userEmail").textContent = userEmail;document.getElementById("userProfilePicture").src = userProfilePicture;}document.getElementById('signOutBtn').addEventListener('click', function() {auth.signOut().then(() => {redirectToSignInPage();}).catch((error) => {console.error("Error during sign out: ", error);});});function redirectToSignInPage(){window.location.href = 'https://nabogaming.github.io/Jisajili/';}</script>
 <link rel="stylesheet" type="text/css" href="bootstrap.css">
-
+<style>
+    .header-bar {
+      width: auto;
+      height: 50px;
+      animation: moveIn 2.5s forwards;
+    }
+    
+    @keyframes moveIn {
+      0% {
+        transform: translateX(-100%);
+      }
+      100% {
+        transform: translateX(0);
+      }
+    }
+  </style>
 <link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&amp;family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet">
 <link rel="manifest" href="_manifest.json">
 <meta id="theme-check" name="theme-color" content="#9900FF">
 <link rel="apple-touch-icon" sizes="180x180" href="images/icon-192x192.png"></head>
-<body class="theme-dark">
+<body class="theme-light">
 <div id="preloader"><div class="spinner-border color-highlight" role="status"></div></div>
 <div id="page">
 
-<div class="header-bar header-fixed header-app header-bar-detached">
-<a data-back-button="" href="#"><i class="bi bi-caret-left-fill font-11 color-theme ps-2"></i></a>
-<a href="#" class="header-title color-theme font-13">Rudi</a>
-<a href="https://www.facebook.com/profile.php?id=100064191845973" style=" top: -2px;"><i class="bi bi-facebook color-blue-dark font-21"></i></a>
+  <div class="header-bar card shadow border-0 shadow-xl header-fixed header-app header-bar-detached" style="height:10px;margin-left:-5vw;background:white;">
+    <div class="card-center float-start">
+      <a href="#"><img id="userProfilePicture" src="profile.png" width="40" class="" style="margin-left: 20px;border-radius: 50px; border: 1px solid white;" alt="profile"></a>
+      <a href="#"><img src="esport.jpg" width="40" style="margin-left: -20px; border-radius: 50px; border: 1px solid white;" alt="profile"></a>
+    </div>
+    <div class="card-center" style="margin-left: 90px;">
+      <strong class="color-black font-13 mb-n2">Nabob, <span>Timeless Squad </span></strong>
+      <span class="color-black font-10 mt-n1 opacity-70">https://nabogaming.github.io/Jisajili</span>
+      <i class="bi bi-three-dots-vertical"></i>
+    </div>
+  </div>
 
-<a href="https://www.twitch.tv/nabogaming2024?sr=a" style=" top: -2px;"><img src="twitch.png" width="23" height="23"></a>
+
+<div class="page-content header-clear-medium">
+<div class="divider divider-faded divider-s"><i class="bi bi-house bg-theme color-dark shadow-m rounded-xl"></i></div>
+      <div class="card card-style rounded-s shadow-card shadow-card-l" style="background-image: url(COD.jpg);" data-card-height="200">
+          <div id="new" class="card-bottom pb-3 px-3">
+</div>
+<div class="card-overlay rounded-m bg-gradient-fade"></div>
 </div>
 <div id="footer-bar" class="footer-bar bg footer-bar-detached">
   <a href="#"><i class="bi bi-house font-20"></i><span>Nyumbani</span></a>
@@ -37,33 +65,7 @@
 </div>
 
 <div class="page-content header-clear-medium">
-<div style="background:linear-gradient(to bottom right ,#121213,#121212,#9900FF);" class="mx-3 rounded-m shadow-m mt-3 mb-3">
-        <div class="d-flex px-2 pb-2 pt-2" style="height:90px;width:300px;margin-top:-25px;">
-                <div>
-                        <a href="#"><img id="userProfilePicture" src="profile.png" width="70" class="" style="border-radius:50px; border: 2px solid blur(4px);"alt="profile"></a>
-                                                       <a href="#"><img src="esport.jpg" width="70" class="" style="border-radius:50px; border: 2px solid blur(4px);margin-top:-96px;margin-left:50px;"alt="profile"></a>
-                </div>
-                <div class="ps-2 " style="margin-top:11px;">
-                        <p id="userName" style="margin:0;padding:0;" class="ps-1 mb-0 color-white font-24 font-900 line-height-s pt-1">User Not Registered&nbsp;<span><i class="color-green-dark bi bi-check-circle-fill font-18"></i></span></p>
-                        <p class="ps-1 mb-0 font-10 opacity-40" id="userEmail" style="color: aqua;margin:0;padding:0;"><a href="https://nabogaming.github.io/Jisajili/" style="color: aqua;">https://nabogaming.github.io/Jisajili/</a></p>
 
-                </div>
-                <div class="ms-auto">
-                        <a href="#" data-bs-toggle="dropdown" class="icon icon-m ps-3"><i class="bi bi-three-dots font-18 color-theme" style="margin-right:-19px;"></i></a>
-
-                        <div class="dropdown-menu  bg-transparent border-0 mt-n1 ms-3">
-                                <div class="card card-style rounded-m shadow-xl mt-1 me-1">
-                                        <div class="list-group list-custom list-group-s list-group-flush rounded-xs px-3 py-1">
-                                                <a href="page-profile-admin.html" class="color-theme opacity-70 list-group-item py-1"><strong class="font-500 font-12">Basic Settings</strong><i class="bi bi-chevron-right"></i></a>
-                                                <a href="page-activity.html" class="color-theme opacity-70 list-group-item py-1"><strong class="font-500 font-12">Taarifa Muhimu</strong><i class="bi bi-chevron-right"></i></a>
-                                                <a href="#" id="signOutBtn" class="color-theme opacity-70 list-group-item py-1"><strong class="font-500 font-12" style="color: red;">Jiondoe Nasi</strong><i class="bi bi-chevron-right"></i></a>
-                                                                                 <a href="#" style="font-size:10px;background:#FFFFFF;border-radius:8px;padding:1px;"class="shadow-l font-900 color-black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BASIC ACCOUNT</a>
-                                        </div>
-                                </div>
-                        </div>
-                </div>
-        </div>
-        </div>
 <script src="bootstrap.min.js"></script>
 <script src="custom.js"></script>
 </body></html>
