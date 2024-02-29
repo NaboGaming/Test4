@@ -11,7 +11,12 @@
 
   const firebaseConfig = {
     // Your Firebase config
-apiKey: "AIzaSyC_VKdV-KsIzUiOb7jFLsYXdTsuGkLiS-Q",authDomain: "register-71bde.firebaseapp.com",projectId: "register-71bde",storageBucket: "register-71bde.appspot.com",messagingSenderId: "412548441298",appId: "1:412548441298:web:e0fb2b6c5fbd4af7d0b90b"
+    apiKey: "AIzaSyC_VKdV-KsIzUiOb7jFLsYXdTsuGkLiS-Q",
+    authDomain: "register-71bde.firebaseapp.com",
+    projectId: "register-71bde",
+    storageBucket: "register-71bde.appspot.com",
+    messagingSenderId: "412548441298",
+    appId: "1:412548441298:web:e0fb2b6c5fbd4af7d0b90b"
   };
 
   const app = initializeApp(firebaseConfig);
@@ -24,34 +29,7 @@ apiKey: "AIzaSyC_VKdV-KsIzUiOb7jFLsYXdTsuGkLiS-Q",authDomain: "register-71bde.fi
       document.getElementById("userEmail").textContent = user.email;
       document.getElementById("userProfilePicture").src = user.photoURL;
 
-      const squadBtns = document.querySelectorAll(".squadBtn");
-      squadBtns.forEach(btn => {
-        btn.addEventListener('click', async () => {
-          const gameName = document.getElementById("gameName").value;
-          const gameID = document.getElementById("gameID").value;
-          const phoneNumber = document.getElementById("phoneNumber").value; // Add phone number input
-
-          if (gameName && gameID && phoneNumber) {
-            const selectedSquad = btn.id;
-            const userSquadRef = ref(realtimeDb, `userSquads/${user.uid}`);
-            const userSquadSnapshot = await get(child(userSquadRef, 'selectedSquad'));
-
-            if (userSquadSnapshot.exists()) {
-              alert("You have already submitted a squad selection.");
-            } else {
-              set(ref(realtimeDb, `userSquads/${user.uid}/gameName`), gameName);
-              set(ref(realtimeDb, `userSquads/${user.uid}/gameID`), gameID);
-              set(ref(realtimeDb, `userSquads/${user.uid}/phoneNumber`), phoneNumber); // Store phone number
-              set(ref(realtimeDb, `userSquads/${user.uid}/selectedSquad`), selectedSquad);
-              alert("Squad selection submitted successfully!");
-              window.location.href = "https://nabogaming.github.io/Nyumbani/";
-            }
-          } else {
-            alert("Please enter game name, game ID, and phone number before selecting a squad.");
-          }
-        });
-      });
-
+      // Reference to the user's squad data in the database
       const userSquadRef = ref(realtimeDb, `userSquads/${user.uid}`);
       const userSquadSnapshot = await get(userSquadRef);
 
@@ -64,6 +42,8 @@ apiKey: "AIzaSyC_VKdV-KsIzUiOb7jFLsYXdTsuGkLiS-Q",authDomain: "register-71bde.fi
         document.getElementById("gameNameDisplay").textContent = gameNameDisplay;
         document.getElementById("gameIDDisplay").textContent = gameIDDisplay;
         document.getElementById("phoneNumberDisplay").textContent = phoneNumberDisplay;
+      } else {
+        // If squad data is not found, display a message or handle it as per your requirement
       }
     } else {
       // Handle if user is not authenticated
