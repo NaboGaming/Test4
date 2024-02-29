@@ -6,7 +6,7 @@
 <title>Akaunti Yangu</title>
 <script defer type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
-  import { getAuth, onAuthStateChanged, listUsers } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
   import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js";
 
   const firebaseConfig = {
@@ -45,32 +45,8 @@
         document.getElementById("selectedSquadDisplay").textContent = selectedSquadDisplay;
       } else {
       }
-
-      // Listing all users and displaying their names and profile pictures
-      listUsers().then((result) => {
-        result.users.forEach((userRecord) => {
-          // Access the user details
-          const name = userRecord.displayName;
-          const profilePictureUrl = userRecord.photoURL;
-
-          // Create elements to display the user details
-          const userDiv = document.createElement('div');
-          userDiv.className = 'user';
-          const userName = document.createElement('p');
-          userName.textContent = name;
-          const userProfilePic = document.createElement('img');
-          userProfilePic.src = profilePictureUrl;
-
-          // Append the user details to the user interface
-          userDiv.appendChild(userName);
-          userDiv.appendChild(userProfilePic);
-          document.getElementById('userList').appendChild(userDiv);
-        });
-      }).catch((error) => {
-        console.error('Error listing users:', error);
-      });
     } else {
-    }
+ }
   });
 </script>
 <link rel="stylesheet" type="text/css" href="bootstrap.css">
@@ -118,7 +94,7 @@
 <div class="divider divider-faded divider-s"><i class="bi bi-house bg-theme color-dark shadow-m rounded-xl"></i></div>
     <p>Phone Number: <input type="text" id="userPhoneNumber" placeholder="Enter your phone number"/><button id="updatePhoneNumberBtn">Update</button></p>
     <p>Profile Photo: <input type="file" id="updateProfilePhotoBtn"/></p>
-  <div id="userList"></div>
+
   <h1>Your Selection</h1>
   <p>Game Name: <span  id="userName" ></span></p>
   <p>Game ID: <span id="gameIDDisplay"></span></p>
