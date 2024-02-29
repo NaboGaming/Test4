@@ -29,46 +29,24 @@
       document.getElementById("userEmail").textContent = user.email;
       document.getElementById("userProfilePicture").src = user.photoURL;
 
-      // Display current phone number on the dashboard
-      const userPhoneNumberDisplay = document.getElementById("userPhoneNumber");
-      userPhoneNumberDisplay.value = user.phoneNumber ? user.phoneNumber : "";
+      // Reference to the user's squad data in the database
+      const userSquadRef = ref(realtimeDb, `userSquads/${user.uid}`);
+      const userSquadSnapshot = await get(userSquadRef);
 
-      // Handle updating phone number
-      document.getElementById("updatePhoneNumberBtn").addEventListener("click", async () => {
-        const newPhoneNumber = userPhoneNumberDisplay.value;
-        try {
-          await user.updatePhoneNumber(newPhoneNumber);
-          // Phone number update successful, update the displayed phone number on the dashboard
-          document.getElementById("phoneNumberDisplay").textContent = newPhoneNumber;
-          // Optionally, update the phone number in the database as well
-          const userSquadRef = ref(realtimeDb, `userSquads/${user.uid}`);
-          set(child(userSquadRef, 'phoneNumber'), newPhoneNumber);
-          alert("Phone number updated successfully");
-        } catch (error) {
-          console.error(error);
-          alert("Failed to update phone number");
-        }
-      });
+      if (userSquadSnapshot.exists()) {
+        // Fetch and display game name, game ID, phone number, and selected squad on user's dashboard
+        const gameNameDisplay = userSquadSnapshot.val().gameName;
+        const gameIDDisplay = userSquadSnapshot.val().gameID;
+        const phoneNumberDisplay = userSquadSnapshot.val().phoneNumber;
+        const selectedSquadDisplay = userSquadSnapshot.val().selectedSquad;
 
-      // Handle updating profile photo
-      document.getElementById("updateProfilePhotoBtn").addEventListener("change", async (e) => {
-        const file = e.target.files[0];
-        const storageRef = storage.ref(`profilePhotos/${user.uid}/${file.name}`);
-        try {
-          await storageRef.put(file);
-          const photoURL = await storageRef.getDownloadURL();
-          await user.updateProfile({
-            photoURL: photoURL
-          });
-          // Profile photo update successful, update the displayed profile photo on the dashboard
-          document.getElementById("userProfilePicture").src = photoURL;
-          alert("Profile photo updated successfully");
-        } catch (error) {
-          console.error(error);
-          alert("Failed to update profile photo");
-        }
-      });
-
+        document.getElementById("gameNameDisplay").textContent = gameNameDisplay;
+        document.getElementById("gameIDDisplay").textContent = gameIDDisplay;
+        document.getElementById("phoneNumberDisplay").textContent = phoneNumberDisplay;
+        document.getElementById("selectedSquadDisplay").textContent = selectedSquadDisplay;
+      } else {
+        // If squad data is not found, display a message or handle it as per your requirement
+      }
     } else {
       // Handle if user is not authenticated
     }
